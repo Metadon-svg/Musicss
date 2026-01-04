@@ -1,3 +1,4 @@
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
@@ -5,8 +6,8 @@
 
     <application
         android:name=".MusicApp"
-        android:label="@string/app_name"
-        android:theme="@style/Theme.MusicPlayer">
+        android:label="Spotifly"
+        android:theme="@android:style/Theme.Material.Light.NoActionBar">
         
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
