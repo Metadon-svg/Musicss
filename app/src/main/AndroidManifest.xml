@@ -5,9 +5,8 @@
 
     <application
         android:name=".MusicApp"
-        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme.Material3.DayNight.NoActionBar">
+        android:theme="@style/Theme.MusicPlayer">
         
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
