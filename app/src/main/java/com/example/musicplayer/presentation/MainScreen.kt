@@ -19,10 +19,11 @@ import coil.compose.AsyncImage
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(viewModel: MusicViewModel = hiltViewModel()) {
+    // Теперь имена точно совпадают с ViewModel
     val tracks by viewModel.tracks
     val current by viewModel.currentTrack
     val playing by viewModel.isPlaying
-    var text by viewModel.searchQuery
+    var query by viewModel.searchQuery
 
     Scaffold(
         bottomBar = {
@@ -60,12 +61,18 @@ fun MainScreen(viewModel: MusicViewModel = hiltViewModel()) {
                 .padding(padding)
         ) {
             Row(modifier = Modifier.padding(16.dp)) {
-                // ИСПРАВЛЕНИЕ: Убрали сложные цвета, оставили стандартные
+                // ИСПРАВЛЕННЫЙ TEXTFIELD
                 TextField(
-                    value = text,
-                    onValueChange = { text = it },
+                    value = query,
+                    onValueChange = { query = it },
                     modifier = Modifier.weight(1f),
-                    placeholder = { Text("Search songs...") }
+                    placeholder = { Text("Search songs...") },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.DarkGray,
+                        unfocusedContainerColor = Color.DarkGray,
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White
+                    )
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(
@@ -77,23 +84,23 @@ fun MainScreen(viewModel: MusicViewModel = hiltViewModel()) {
             }
 
             LazyColumn {
-                items(tracks) { track ->
+                items(tracks) { song ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { viewModel.play(track) }
+                            .clickable { viewModel.play(song) }
                             .padding(horizontal = 16.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         AsyncImage(
-                            model = track.imageUrl,
+                            model = song.imageUrl,
                             contentDescription = null,
                             modifier = Modifier.size(60.dp).clip(RoundedCornerShape(4.dp))
                         )
                         Spacer(modifier = Modifier.width(16.dp))
                         Column {
-                            Text(track.title, color = Color.White, style = MaterialTheme.typography.bodyLarge)
-                            Text(track.artist, color = Color.Gray, style = MaterialTheme.typography.bodyMedium)
+                            Text(song.title, color = Color.White, style = MaterialTheme.typography.bodyLarge)
+                            Text(song.artist, color = Color.Gray, style = MaterialTheme.typography.bodyMedium)
                         }
                     }
                 }
