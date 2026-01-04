@@ -10,11 +10,16 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MusicService : MediaLibraryService() {
     @Inject lateinit var player: ExoPlayer
-    private var session: MediaSession? = null
+    private var session: MediaLibrarySession? = null
 
     override fun onCreate() {
         super.onCreate()
-        session = MediaSession.Builder(this, player).build()
+        // ВОТ ТУТ БЫЛА ОШИБКА. Теперь мы создаем именно LibrarySession
+        session = MediaLibrarySession.Builder(
+            this, 
+            player, 
+            object : MediaLibrarySession.Callback {}
+        ).build()
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = session
@@ -25,7 +30,11 @@ class MusicService : MediaLibraryService() {
     }
 
     override fun onDestroy() {
-        session?.run { player.release(); release(); session = null }
+        session?.run {
+            player.release()
+            release()
+            session = null
+        }
         super.onDestroy()
     }
 }
