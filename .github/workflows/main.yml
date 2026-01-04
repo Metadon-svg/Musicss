@@ -1,7 +1,7 @@
-name: Build APK Manually
+name: Auto-Fix and Build APK
 
 on:
-  workflow_dispatch: # Кнопка ручного запуска
+  workflow_dispatch: # Ручной запуск
 
 jobs:
   build:
@@ -16,19 +16,33 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # Устанавливаем Gradle (версия 8.5)
+    # --- ВОТ ЭТОТ БЛОК ЧИНИТ ТВОИ ПАПКИ ---
+    - name: Fix Folder Structure
+      run: |
+        cd app/src/main/java
+        # Создаем правильную папку
+        mkdir -p com/example/musicplayer
+        
+        # Перемещаем файлы, если они лежат не там
+        mv MusicApp.kt com/example/musicplayer/ 2>/dev/null || true
+        mv MainActivity.kt com/example/musicplayer/ 2>/dev/null || true
+        mv data com/example/musicplayer/ 2>/dev/null || true
+        mv di com/example/musicplayer/ 2>/dev/null || true
+        mv presentation com/example/musicplayer/ 2>/dev/null || true
+        mv service com/example/musicplayer/ 2>/dev/null || true
+        
+        echo "Папки исправлены!"
+
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
       with:
         gradle-version: '8.5'
 
-    # Собираем APK
     - name: Build APK
       run: gradle assembleDebug
 
-    # Загружаем файл (ОБНОВИЛИ ВЕРСИЮ ДО v4)
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: My-Music-App
+        name: My-Music-App-Fixed
         path: app/build/outputs/apk/debug/app-debug.apk
