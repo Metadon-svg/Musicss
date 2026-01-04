@@ -17,22 +17,24 @@ class MusicViewModel @Inject constructor(
     private val repo: YouTubeRepo,
     private val player: ExoPlayer
 ) : ViewModel() {
-    var songs = mutableStateOf<List<Song>>(emptyList())
-    var current = mutableStateOf<Song?>(null)
+
+    // ВАЖНО: Названия совпадают с MainScreen
+    var tracks = mutableStateOf<List<Song>>(emptyList())
+    var currentTrack = mutableStateOf<Song?>(null)
     var isPlaying = mutableStateOf(false)
-    var query = mutableStateOf("NCS") // Поиск по умолчанию
+    var searchQuery = mutableStateOf("NCS") 
 
     init { search() }
 
     fun search() {
         viewModelScope.launch(Dispatchers.IO) {
-            songs.value = repo.search(query.value)
+            tracks.value = repo.search(searchQuery.value)
         }
     }
 
     fun play(song: Song) {
         viewModelScope.launch(Dispatchers.IO) {
-            current.value = song
+            currentTrack.value = song
             val url = repo.getStreamUrl(song.id) ?: return@launch
             viewModelScope.launch(Dispatchers.Main) {
                 player.setMediaItem(MediaItem.fromUri(url))
@@ -43,8 +45,13 @@ class MusicViewModel @Inject constructor(
         }
     }
 
-    fun toggle() {
-        if (player.isPlaying) { player.pause(); isPlaying.value = false } 
-        else { player.play(); isPlaying.value = true }
+    fun togglePlay() {
+        if (player.isPlaying) { 
+            player.pause()
+            isPlaying.value = false 
+        } else { 
+            player.play()
+            isPlaying.value = true 
+        }
     }
 }
