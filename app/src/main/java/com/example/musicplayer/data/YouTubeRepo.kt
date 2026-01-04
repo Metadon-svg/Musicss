@@ -7,11 +7,16 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import javax.inject.Inject
 
-data class Song(val id: String, val title: String, val artist: String, val image: String)
+// ВОТ ОНА, МОДЕЛЬ ДАННЫХ
+data class Song(
+    val id: String,
+    val title: String,
+    val artist: String,
+    val imageUrl: String
+)
 
 class YouTubeRepo @Inject constructor() {
     private val client = OkHttpClient()
-    // Ключ клиента Web (публичный)
     private val KEY = "AIzaSyCXN" + "59843" + "bb" 
 
     fun search(query: String): List<Song> {
