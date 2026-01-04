@@ -1,15 +1,19 @@
-
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Разрешения (Интернет и Фоновая музыка) -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
-        android:name=".MusicApp"
+        android:name="com.example.musicplayer.MusicApp"
         android:label="Spotifly"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
         
-        <activity android:name=".MainActivity" android:exported="true">
+        <activity 
+            android:name="com.example.musicplayer.MainActivity" 
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -17,7 +21,7 @@
         </activity>
 
         <service
-            android:name=".service.MusicService"
+            android:name="com.example.musicplayer.service.MusicService"
             android:exported="true"
             android:foregroundServiceType="mediaPlayback">
             <intent-filter>
