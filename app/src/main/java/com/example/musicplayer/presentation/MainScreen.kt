@@ -18,44 +18,82 @@ import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(vm: MusicViewModel = hiltViewModel()) {
-    val songs by vm.songs
-    val current by vm.current
-    val playing by vm.isPlaying
-    var text by vm.query
+fun MainScreen(viewModel: MusicViewModel = hiltViewModel()) {
+    val tracks by viewModel.tracks
+    val current by viewModel.currentTrack
+    val playing by viewModel.isPlaying
+    var text by viewModel.searchQuery
 
     Scaffold(
         bottomBar = {
             if (current != null) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().background(Color(0xFF282828)).padding(8.dp).clickable { vm.toggle() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFF202020))
+                        .padding(8.dp)
+                        .clickable { viewModel.togglePlay() },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    AsyncImage(model = current!!.image, contentDescription = null, modifier = Modifier.size(50.dp))
-                    Column(modifier = Modifier.weight(1f).padding(horizontal = 10.dp)) {
+                    AsyncImage(
+                        model = current!!.imageUrl, 
+                        contentDescription = null, 
+                        modifier = Modifier.size(50.dp).clip(RoundedCornerShape(4.dp))
+                    )
+                    Column(modifier = Modifier.weight(1f).padding(horizontal = 12.dp)) {
                         Text(current!!.title, color = Color.White, maxLines = 1)
                         Text(current!!.artist, color = Color.Gray, maxLines = 1)
                     }
-                    Text(if (playing) "||" else "▶", color = Color.Green, modifier = Modifier.padding(10.dp))
+                    Text(
+                        text = if (playing) "PAUSE" else "PLAY",
+                        color = Color(0xFF1DB954),
+                        modifier = Modifier.padding(16.dp)
+                    )
                 }
             }
         }
     ) { padding ->
-        Column(modifier = Modifier.fillMaxSize().background(Color.Black).padding(padding)) {
-            Row(modifier = Modifier.padding(10.dp)) {
-                TextField(value = text, onValueChange = { text = it }, modifier = Modifier.weight(1f), colors = TextFieldDefaults.textFieldColors(containerColor = Color.DarkGray, textColor = Color.White))
-                Button(onClick = { vm.search() }, colors = ButtonDefaults.buttonColors(containerColor = Color.Green)) { Text("GO") }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFF121212))
+                .padding(padding)
+        ) {
+            Row(modifier = Modifier.padding(16.dp)) {
+                // ИСПРАВЛЕНИЕ: Убрали сложные цвета, оставили стандартные
+                TextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    modifier = Modifier.weight(1f),
+                    placeholder = { Text("Search songs...") }
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    onClick = { viewModel.search() },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1DB954))
+                ) {
+                    Text("GO")
+                }
             }
+
             LazyColumn {
-                items(songs) { song ->
+                items(tracks) { track ->
                     Row(
-                        modifier = Modifier.fillMaxWidth().clickable { vm.play(song) }.padding(10.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { viewModel.play(track) }
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        AsyncImage(model = song.image, contentDescription = null, modifier = Modifier.size(50.dp).clip(RoundedCornerShape(4.dp)))
-                        Column(modifier = Modifier.padding(start = 10.dp)) {
-                            Text(song.title, color = Color.White)
-                            Text(song.artist, color = Color.Gray)
+                        AsyncImage(
+                            model = track.imageUrl,
+                            contentDescription = null,
+                            modifier = Modifier.size(60.dp).clip(RoundedCornerShape(4.dp))
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Column {
+                            Text(track.title, color = Color.White, style = MaterialTheme.typography.bodyLarge)
+                            Text(track.artist, color = Color.Gray, style = MaterialTheme.typography.bodyMedium)
                         }
                     }
                 }
